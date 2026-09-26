@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NBA Standings — 2025-26 Final</title>
+<style>
+  :root {
+    --bg: #0b0f1a;
+    --panel: #131a2a;
+    --panel-alt: #0f1524;
+    --border: #232c42;
+    --text: #e8ecf5;
+    --text-dim: #8b93a7;
+    --accent: #ff6b35;
+    --win: #2fbf71;
+    --loss: #e5484d;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 2rem 1rem 4rem;
+  }
+  header {
+    max-width: 1000px;
+    margin: 0 auto 1.5rem;
+    text-align: center;
+  }
+  header h1 {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    margin: 0 0 0.25rem;
+    letter-spacing: -0.02em;
+  }
+  header p.subtitle {
+    color: var(--text-dim);
+    margin: 0;
+    font-size: 0.95rem;
+  }
+  .wrap {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  .tabs {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin: 1.5rem 0 1rem;
+  }
+  .tab {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 0.5rem 1.25rem;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.15s ease;
+  }
+  .tab.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .conf-block { display: none; }
+  .conf-block.active { display: block; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--panel);
+    border-radius: 12px;
+    overflow: hidden;
+    font-size: 0.85rem;
+  }
+  thead th {
+    background: var(--panel-alt);
+    color: var(--text-dim);
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    padding: 0.65rem 0.5rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  thead th:nth-child(2) { text-align: left; }
+  tbody td {
+    padding: 0.6rem 0.5rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody td:nth-child(2) {
+    text-align: left;
+    font-weight: 600;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.03); }
+  tbody tr.playoff-cut td:first-child {
+    box-shadow: inset 3px 0 0 var(--accent);
+  }
+  .streak-w { color: var(--win); font-weight: 700; }
+  .streak-l { color: var(--loss); font-weight: 700; }
+  .diff-pos { color: var(--win); }
+  .diff-neg { color: var(--loss); }
+  footer {
+    max-width: 1000px;
+    margin: 2rem auto 0;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.78rem;
+    line-height: 1.6;
+  }
+  footer a { color: var(--accent); }
+  @media (max-width: 640px) {
+    table { font-size: 0.72rem; }
+    thead th, tbody td { padding: 0.45rem 0.3rem; }
+    .home-road { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>NBA Standings</h1>
+  <p class="subtitle">2025-26 Regular Season — Final Standings</p>
+</header>
+
+<div class="wrap">
+  <div class="tabs">
+    <button class="tab active" data-conf="Eastern Conference">Eastern Conference</button>
+    <button class="tab" data-conf="Western Conference">Western Conference</button>
+  </div>
+
+  <div id="tables"></div>
+</div>
+
+<footer>
+  Source: ESPN NBA Standings API (site.api.espn.com), 2025-26 regular season final standings.
+  Retrieved 2026-09-26.
+</footer>
+
+<script>
+const DATA = [{"conference": "Eastern Conference", "team": "Detroit Pistons", "seed": "1", "wins": "60", "losses": "22", "win_pct": ".732", "games_behind": "-", "home": "31-9", "road": "28-13", "streak": "W3", "points_for": "9657", "points_against": "8988", "differential": "+8.2"}, {"conference": "Eastern Conference", "team": "Boston Celtics", "seed": "2", "wins": "56", "losses": "26", "win_pct": ".683", "games_behind": "4", "home": "30-11", "road": "26-15", "streak": "W2", "points_for": "9418", "points_against": "8787", "differential": "+7.7"}, {"conference": "Eastern Conference", "team": "New York Knicks", "seed": "3", "wins": "53", "losses": "29", "win_pct": ".646", "games_behind": "7", "home": "30-10", "road": "22-19", "streak": "L1", "points_for": "9549", "points_against": "9030", "differential": "+6.4"}, {"conference": "Eastern Conference", "team": "Cleveland Cavaliers", "seed": "4", "wins": "52", "losses": "30", "win_pct": ".634", "games_behind": "8", "home": "27-14", "road": "25-16", "streak": "W1", "points_for": "9800", "points_against": "9464", "differential": "+4.1"}, {"conference": "Eastern Conference", "team": "Toronto Raptors", "seed": "5", "wins": "46", "losses": "36", "win_pct": ".561", "games_behind": "14", "home": "24-17", "road": "22-19", "streak": "W1", "points_for": "9400", "points_against": "9168", "differential": "+2.8"}, {"conference": "Eastern Conference", "team": "Atlanta Hawks", "seed": "6", "wins": "46", "losses": "36", "win_pct": ".561", "games_behind": "14", "home": "24-17", "road": "22-19", "streak": "L1", "points_for": "9714", "points_against": "9516", "differential": "+2.5"}, {"conference": "Eastern Conference", "team": "Philadelphia 76ers", "seed": "7", "wins": "45", "losses": "37", "win_pct": ".549", "games_behind": "15", "home": "23-18", "road": "22-19", "streak": "W2", "points_for": "9502", "points_against": "9517", "differential": "-0.2"}, {"conference": "Eastern Conference", "team": "Orlando Magic", "seed": "8", "wins": "45", "losses": "37", "win_pct": ".549", "games_behind": "15", "home": "25-15", "road": "19-20", "streak": "L1", "points_for": "9491", "points_against": "9439", "differential": "+0.6"}, {"conference": "Eastern Conference", "team": "Charlotte Hornets", "seed": "9", "wins": "44", "losses": "38", "win_pct": ".537", "games_behind": "16", "home": "21-20", "road": "23-18", "streak": "W1", "points_for": "9513", "points_against": "9117", "differential": "+4.8"}, {"conference": "Eastern Conference", "team": "Miami Heat", "seed": "10", "wins": "43", "losses": "39", "win_pct": ".524", "games_behind": "17", "home": "26-15", "road": "17-24", "streak": "W2", "points_for": "9911", "points_against": "9720", "differential": "+2.4"}, {"conference": "Eastern Conference", "team": "Milwaukee Bucks", "seed": "11", "wins": "32", "losses": "50", "win_pct": ".390", "games_behind": "28", "home": "19-22", "road": "13-28", "streak": "L1", "points_for": "9072", "points_against": "9581", "differential": "-6.2"}, {"conference": "Eastern Conference", "team": "Chicago Bulls", "seed": "12", "wins": "31", "losses": "51", "win_pct": ".378", "games_behind": "29", "home": "18-23", "road": "13-28", "streak": "L2", "points_for": "9537", "points_against": "9964", "differential": "-5.2"}, {"conference": "Eastern Conference", "team": "Brooklyn Nets", "seed": "13", "wins": "20", "losses": "62", "win_pct": ".244", "games_behind": "40", "home": "12-29", "road": "8-33", "streak": "L3", "points_for": "8686", "points_against": "9505", "differential": "-10.0"}, {"conference": "Eastern Conference", "team": "Indiana Pacers", "seed": "14", "wins": "19", "losses": "63", "win_pct": ".232", "games_behind": "41", "home": "11-30", "road": "8-33", "streak": "L2", "points_for": "9219", "points_against": "9874", "differential": "-8.0"}, {"conference": "Eastern Conference", "team": "Washington Wizards", "seed": "15", "wins": "17", "losses": "65", "win_pct": ".207", "games_behind": "43", "home": "11-30", "road": "6-35", "streak": "L10", "points_for": "9258", "points_against": "10240", "differential": "-12.0"}, {"conference": "Western Conference", "team": "Oklahoma City Thunder", "seed": "1", "wins": "64", "losses": "18", "win_pct": ".780", "games_behind": "-", "home": "34-7", "road": "30-10", "streak": "L2", "points_for": "9760", "points_against": "8846", "differential": "+11.1"}, {"conference": "Western Conference", "team": "San Antonio Spurs", "seed": "2", "wins": "62", "losses": "20", "win_pct": ".756", "games_behind": "2", "home": "32-8", "road": "29-12", "streak": "L1", "points_for": "9826", "points_against": "9145", "differential": "+8.3"}, {"conference": "Western Conference", "team": "Denver Nuggets", "seed": "3", "wins": "54", "losses": "28", "win_pct": ".659", "games_behind": "10", "home": "28-13", "road": "26-15", "streak": "W12", "points_for": "10010", "points_against": "9587", "differential": "+5.2"}, {"conference": "Western Conference", "team": "Los Angeles Lakers", "seed": "4", "wins": "53", "losses": "29", "win_pct": ".646", "games_behind": "11", "home": "28-13", "road": "25-16", "streak": "W3", "points_for": "9540", "points_against": "9395", "differential": "+1.7"}, {"conference": "Western Conference", "team": "Houston Rockets", "seed": "5", "wins": "52", "losses": "30", "win_pct": ".634", "games_behind": "12", "home": "30-11", "road": "22-19", "streak": "W1", "points_for": "9449", "points_against": "9021", "differential": "+5.2"}, {"conference": "Western Conference", "team": "Minnesota Timberwolves", "seed": "6", "wins": "49", "losses": "33", "win_pct": ".598", "games_behind": "15", "home": "26-15", "road": "23-18", "streak": "W2", "points_for": "9676", "points_against": "9401", "differential": "+3.4"}, {"conference": "Western Conference", "team": "Portland Trail Blazers", "seed": "7", "wins": "42", "losses": "40", "win_pct": ".512", "games_behind": "22", "home": "24-17", "road": "18-23", "streak": "W2", "points_for": "9469", "points_against": "9493", "differential": "-0.3"}, {"conference": "Western Conference", "team": "Phoenix Suns", "seed": "8", "wins": "45", "losses": "37", "win_pct": ".549", "games_behind": "19", "home": "25-16", "road": "20-21", "streak": "W1", "points_for": "9232", "points_against": "9112", "differential": "+1.5"}, {"conference": "Western Conference", "team": "LA Clippers", "seed": "9", "wins": "42", "losses": "40", "win_pct": ".512", "games_behind": "22", "home": "23-18", "road": "19-22", "streak": "W1", "points_for": "9329", "points_against": "9236", "differential": "+1.2"}, {"conference": "Western Conference", "team": "Golden State Warriors", "seed": "10", "wins": "37", "losses": "45", "win_pct": ".451", "games_behind": "27", "home": "22-19", "road": "15-26", "streak": "L3", "points_for": "9398", "points_against": "9444", "differential": "-0.6"}, {"conference": "Western Conference", "team": "New Orleans Pelicans", "seed": "11", "wins": "26", "losses": "56", "win_pct": ".317", "games_behind": "38", "home": "17-24", "road": "9-32", "streak": "L2", "points_for": "9473", "points_against": "9842", "differential": "-4.5"}, {"conference": "Western Conference", "team": "Dallas Mavericks", "seed": "12", "wins": "26", "losses": "56", "win_pct": ".317", "games_behind": "38", "home": "16-25", "road": "10-30", "streak": "W1", "points_for": "9358", "points_against": "9810", "differential": "-5.5"}, {"conference": "Western Conference", "team": "Memphis Grizzlies", "seed": "13", "wins": "25", "losses": "57", "win_pct": ".305", "games_behind": "39", "home": "13-27", "road": "11-29", "streak": "L8", "points_for": "9403", "points_against": "9896", "differential": "-6.0"}, {"conference": "Western Conference", "team": "Sacramento Kings", "seed": "14", "wins": "22", "losses": "60", "win_pct": ".268", "games_behind": "42", "home": "15-26", "road": "7-34", "streak": "L1", "points_for": "9102", "points_against": "9922", "differential": "-10.0"}, {"conference": "Western Conference", "team": "Utah Jazz", "seed": "15", "wins": "22", "losses": "60", "win_pct": ".268", "games_behind": "42", "home": "14-27", "road": "8-33", "streak": "L1", "points_for": "9641", "points_against": "10333", "differential": "-8.4"}];
+
+function streakClass(s) {
+  if (!s) return "";
+  return s.startsWith("W") ? "streak-w" : s.startsWith("L") ? "streak-l" : "";
+}
+
+function diffClass(d) {
+  if (!d) return "";
+  return d.trim().startsWith("-") ? "diff-neg" : "diff-pos";
+}
+
+function renderConference(conf) {
+  const rows = DATA.filter(r => r.conference === conf)
+                    .sort((a, b) => parseInt(a.seed) - parseInt(b.seed));
+
+  const trs = rows.map(r => `
+    <tr class="${parseInt(r.seed) <= 8 ? 'playoff-cut' : ''}">
+      <td>${r.seed}</td>
+      <td>${r.team}</td>
+      <td>${r.wins}</td>
+      <td>${r.losses}</td>
+      <td>${r.win_pct}</td>
+      <td>${r.games_behind}</td>
+      <td class="home-road">${r.home}</td>
+      <td class="home-road">${r.road}</td>
+      <td class="${streakClass(r.streak)}">${r.streak}</td>
+      <td class="${diffClass(r.differential)}">${r.differential}</td>
+    </tr>
+  `).join("");
+
+  return `
+    <div class="conf-block" data-conf="${conf}">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Team</th>
+            <th>W</th>
+            <th>L</th>
+            <th>PCT</th>
+            <th>GB</th>
+            <th class="home-road">Home</th>
+            <th class="home-road">Road</th>
+            <th>Strk</th>
+            <th>Diff</th>
+          </tr>
+        </thead>
+        <tbody>${trs}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+const conferences = ["Eastern Conference", "Western Conference"];
+document.getElementById("tables").innerHTML = conferences.map(renderConference).join("");
+document.querySelector('.conf-block[data-conf="Eastern Conference"]').classList.add("active");
+
+document.querySelectorAll(".tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll(".conf-block").forEach(b => b.classList.remove("active"));
+    tab.classList.add("active");
+    document.querySelector(`.conf-block[data-conf="${tab.dataset.conf}"]`).classList.add("active");
+  });
+});
+</script>
+
+</body>
+</html>
